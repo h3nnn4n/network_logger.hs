@@ -9,34 +9,30 @@ import System.Process
 import System.Environment
 
 diff = do
-    img <- openFile "/sys/class/net/eth0/statistics/tx_bytes" ReadMode
-    time <- hGetLine img
-    hClose img
+    file <- openFile "/sys/class/net/eth0/statistics/tx_bytes" ReadMode
+    tx <- hGetLine file
+    hClose file
+
+    file <- openFile "/sys/class/net/eth0/statistics/rx_bytes" ReadMode
+    rx <- hGetLine file
+    hClose file
 
     threadDelay $ 1000 * 1000
 
-    img <- openFile "/sys/class/net/eth0/statistics/tx_bytes" ReadMode
-    time_dx <- hGetLine img
-    hClose img
+    file <- openFile "/sys/class/net/eth0/statistics/tx_bytes" ReadMode
+    tx_dx <- hGetLine file
+    hClose file
 
-    print $ (read time_dx :: Int) - (read time :: Int)
+    file <- openFile "/sys/class/net/eth0/statistics/rx_bytes" ReadMode
+    rx_dx <- hGetLine file
+    hClose file
+
+    let rr = ((read rx_dx :: Int) - (read rx :: Int))
+        tt = ((read tx_dx :: Int) - (read tx :: Int))
+
+    putStrLn $ (show rr) ++ " " ++ (show tt)
 
     diff
-
-    return ()
 
 main = do
-    --args <- getArgs
-    --g    <- newStdGen
-
-    --when (null args) $ error "Usage: ./rule110 steps size"
-
-    --img <- openFile "/sys/class/net/eth0/statistics/tx_bytes" ReadMode
-
-    --str <- hGetLine img
-
-    --putStrLn str
-
     diff
-
-    return ()
